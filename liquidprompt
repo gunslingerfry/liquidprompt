@@ -334,8 +334,9 @@ _lp_source_config()
     LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
     LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_ENABLE_FQDN=${LP_ENABLE_FQDN:-0}
-    # LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
+    LP_DISABLED_VCS_PATH="${LP_DISABLED_VCS_PATH}"
     LP_ENABLE_SUDO=${LP_ENABLE_SUDO:-0}
+    LP_MAX_GIT_BRANCH_LENGTH=${LP_MAX_GIT_BRANCH_LENGTH:-0}
 
     LP_MARK_DEFAULT="${LP_MARK_DEFAULT:-$_LP_MARK_SYMBOL}"
     LP_MARK_BATTERY="${LP_MARK_BATTERY:-"⌁"}"
@@ -887,8 +888,12 @@ _lp_git_branch_color()
 
     local branch
     branch="$(_lp_git_branch)"
+    # now shorten to the length provided
     if [[ -n "$branch" ]]; then
 
+        if (( LP_MAX_GIT_BRANCH_LENGTH != 0 )) && (( ${#branch} > LP_MAX_GIT_BRANCH_LENGTH )); then
+            branch="$(echo ${branch} | cut -c -${LP_MAX_GIT_BRANCH_LENGTH})..."
+        fi
         local end
         end="${LP_COLOR_CHANGES}$(_lp_git_head_status)${NO_COL}"
 
